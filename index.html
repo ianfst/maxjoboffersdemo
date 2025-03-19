@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxJobOffers Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .feature {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            width: calc(33.333% - 20px);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature h3 {
+            color: #2c3e50;
+        }
+
+        .cta {
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 30px;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #2ecc71;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #27ae60;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 70%;
+            max-width: 700px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .resume-preview {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .feature {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>MaxJobOffers</h1>
+            <p>AI-Powered Job Search & Application Platform</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <section>
+            <h2>About MaxJobOffers</h2>
+            <p>MaxJobOffers is a comprehensive job search and application platform that leverages AI to help users find
+                jobs, optimize their resumes, create cover letters, prepare for interviews, and more.</p>
+        </section>
+
+        <section class="features">
+            <div class="feature" id="job-search-feature">
+                <h3>Job Search</h3>
+                <p>Search for jobs using the Google Jobs API with advanced filtering options.</p>
+            </div>
+            <div class="feature" id="resume-feature">
+                <h3>Resume Management</h3>
+                <p>Upload, analyze, and optimize resumes for specific job descriptions using AI.</p>
+            </div>
+            <div class="feature" id="cover-letter-feature">
+                <h3>Cover Letter Generation</h3>
+                <p>Create tailored cover letters using AI based on your resume and job description.</p>
+            </div>
+            <div class="feature" id="interview-feature">
+                <h3>Interview Preparation</h3>
+                <p>Mock interviews with AI feedback and recording capabilities.</p>
+            </div>
+            <div class="feature" id="linkedin-feature">
+                <h3>LinkedIn Profile Optimization</h3>
+                <p>Generate and optimize LinkedIn profiles to attract recruiters.</p>
+            </div>
+            <div class="feature" id="company-feature">
+                <h3>Company Research</h3>
+                <p>AI-powered company research for interview preparation.</p>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Ready to Supercharge Your Job Search?</h2>
+            <p>Join MaxJobOffers today and increase your chances of landing your dream job.</p>
+            <a href="#" class="button" id="signup-button">Sign Up Now</a>
+        </section>
+    </div>
+
+    <!-- Resume Modal -->
+    <div id="resume-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="resume-close">&times;</span>
+            <h2>Resume Optimization</h2>
+            <p>Upload your resume and a job description to get AI-powered suggestions to optimize your resume for the
+                specific job.</p>
+
+            <div class="form-group">
+                <label for="resume-text">Paste your resume text:</label>
+                <textarea id="resume-text" rows="8" placeholder="Paste your resume here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="job-description">Paste job description:</label>
+                <textarea id="job-description" rows="8" placeholder="Paste the job description here..."></textarea>
+            </div>
+
+            <button class="button" id="optimize-button">Optimize Resume</button>
+
+            <div class="loading" id="resume-loading">
+                <div class="spinner"></div>
+                <p>Analyzing and optimizing your resume...</p>
+            </div>
+
+            <div class="resume-preview" id="optimized-resume" style="display: none;">
+                <h3>Optimized Resume</h3>
+                <div id="optimized-resume-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="signup-close">&times;</span>
+            <h2>Sign Up for MaxJobOffers</h2>
+            <p>Create your account to access all features of MaxJobOffers.</p>
+
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" placeholder="Enter your email address">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Create a password">
+            </div>
+
+            <div class="form-group">
+                <label for="plan">Select Plan:</label>
+                <select id="plan">
+                    <option value="basic">Basic - $9.99/month</option>
+                    <option value="professional">Professional - $19.99/month</option>
+                    <option value="enterprise">Enterprise - $49.99/month</option>
+                </select>
+            </div>
+
+            <button class="button" id="create-account-button">Create Account</button>
+        </div>
+    </div>
+
+    <!-- Cover Letter Modal -->
+    <div id="cover-letter-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="cover-letter-close">&times;</span>
+            <h2>Cover Letter Generation</h2>
+            <p>Generate a tailored cover letter based on your resume and a job description.</p>
+
+            <div class="form-group">
+                <label for="cl-resume-text">Paste your resume text:</label>
+                <textarea id="cl-resume-text" rows="6" placeholder="Paste your resume here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="cl-job-description">Paste job description:</label>
+                <textarea id="cl-job-description" rows="6" placeholder="Paste the job description here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="cl-company-name">Company Name:</label>
+                <input type="text" id="cl-company-name" placeholder="Enter the company name">
+            </div>
+
+            <div class="form-group">
+                <label for="cl-hiring-manager">Hiring Manager (if known):</label>
+                <input type="text" id="cl-hiring-manager" placeholder="Enter the hiring manager's name (optional)">
+            </div>
+
+            <button class="button" id="generate-cover-letter-button">Generate Cover Letter</button>
+
+            <div class="loading" id="cover-letter-loading">
+                <div class="spinner"></div>
+                <p>Generating your cover letter...</p>
+            </div>
+
+            <div class="resume-preview" id="generated-cover-letter" style="display: none;">
+                <h3>Generated Cover Letter</h3>
+                <div id="cover-letter-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LinkedIn Profile Modal -->
+    <div id="linkedin-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="linkedin-close">&times;</span>
+            <h2>LinkedIn Profile Optimization</h2>
+            <p>Generate an optimized LinkedIn profile based on your resume and career goals.</p>
+
+            <div class="form-group">
+                <label for="linkedin-resume">Paste your resume text:</label>
+                <textarea id="linkedin-resume" rows="6" placeholder="Paste your resume here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="linkedin-industry">Industry:</label>
+                <select id="linkedin-industry">
+                    <option value="">Select your industry</option>
+                    <option value="technology">Technology</option>
+                    <option value="finance">Finance</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="education">Education</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="sales">Sales</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="linkedin-goals">Career Goals:</label>
+                <textarea id="linkedin-goals" rows="3"
+                    placeholder="Describe your career goals and target roles..."></textarea>
+            </div>
+
+            <button class="button" id="optimize-linkedin-button">Optimize LinkedIn Profile</button>
+
+            <div class="loading" id="linkedin-loading">
+                <div class="spinner"></div>
+                <p>Optimizing your LinkedIn profile...</p>
+            </div>
+
+            <div class="resume-preview" id="optimized-linkedin" style="display: none;">
+                <h3>Optimized LinkedIn Profile</h3>
+                <div id="linkedin-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Search Modal -->
+    <div id="job-search-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="job-search-close">&times;</span>
+            <h2>Job Search</h2>
+            <p>Search for jobs with advanced filtering options.</p>
+
+            <div class="form-group">
+                <label for="job-keywords">Keywords:</label>
+                <input type="text" id="job-keywords" placeholder="Job title, skills, or keywords">
+            </div>
+
+            <div class="form-group">
+                <label for="job-location">Location:</label>
+                <input type="text" id="job-location" placeholder="City, state, or remote">
+            </div>
+
+            <div class="form-group">
+                <label for="job-type">Job Type:</label>
+                <select id="job-type">
+                    <option value="all">All Job Types</option>
+                    <option value="full-time">Full-time</option>
+                    <option value="part-time">Part-time</option>
+                    <option value="contract">Contract</option>
+                    <option value="internship">Internship</option>
+                    <option value="remote">Remote</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="job-experience">Experience Level:</label>
+                <select id="job-experience">
+                    <option value="all">All Experience Levels</option>
+                    <option value="entry">Entry Level</option>
+                    <option value="mid">Mid Level</option>
+                    <option value="senior">Senior Level</option>
+                    <option value="executive">Executive</option>
+                </select>
+            </div>
+
+            <button class="button" id="search-jobs-button">Search Jobs</button>
+
+            <div class="loading" id="job-search-loading">
+                <div class="spinner"></div>
+                <p>Searching for jobs...</p>
+            </div>
+
+            <div class="resume-preview" id="job-search-results" style="display: none;">
+                <h3>Job Search Results</h3>
+                <div id="job-results-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Research Modal -->
+    <div id="company-research-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="company-research-close">&times;</span>
+            <h2>Company Research</h2>
+            <p>Get AI-powered insights about a company to prepare for interviews or job applications.</p>
+
+            <div class="form-group">
+                <label for="company-name">Company Name:</label>
+                <input type="text" id="company-name" placeholder="Enter the company name">
+            </div>
+
+            <div class="form-group">
+                <label for="company-industry">Industry:</label>
+                <select id="company-industry">
+                    <option value="">Select industry (optional)</option>
+                    <option value="technology">Technology</option>
+                    <option value="finance">Finance</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="education">Education</option>
+                    <option value="retail">Retail</option>
+                    <option value="manufacturing">Manufacturing</option>
+                    <option value="media">Media & Entertainment</option>
+                    <option value="consulting">Consulting</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="research-focus">Research Focus:</label>
+                <select id="research-focus" multiple size="4">
+                    <option value="overview" selected>Company Overview</option>
+                    <option value="culture">Company Culture</option>
+                    <option value="financials">Financial Health</option>
+                    <option value="news">Recent News</option>
+                    <option value="competitors">Competitors</option>
+                    <option value="interview">Interview Tips</option>
+                </select>
+                <small style="display: block; margin-top: 5px; color: #666;">Hold Ctrl/Cmd to select multiple
+                    options</small>
+            </div>
+
+            <button class="button" id="research-company-button">Research Company</button>
+
+            <div class="loading" id="company-research-loading">
+                <div class="spinner"></div>
+                <p>Researching company information...</p>
+            </div>
+
+            <div class="resume-preview" id="company-research-results" style="display: none;">
+                <h3>Company Research Results</h3>
+                <div id="company-research-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interview Prep Modal -->
+    <div id="interview-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="interview-close">&times;</span>
+            <h2>Interview Preparation</h2>
+            <p>Prepare for your interview with AI-generated questions and feedback.</p>
+
+            <div class="form-group">
+                <label for="interview-job-title">Job Title:</label>
+                <input type="text" id="interview-job-title" placeholder="Enter the job title">
+            </div>
+
+            <div class="form-group">
+                <label for="interview-company">Company:</label>
+                <input type="text" id="interview-company" placeholder="Enter the company name">
+            </div>
+
+            <div class="form-group">
+                <label for="interview-type">Interview Type:</label>
+                <select id="interview-type">
+                    <option value="behavioral">Behavioral</option>
+                    <option value="technical">Technical</option>
+                    <option value="case">Case Study</option>
+                    <option value="leadership">Leadership</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="interview-experience">Your Experience Level:</label>
+                <select id="interview-experience">
+                    <option value="entry">Entry Level (0-2 years)</option>
+                    <option value="mid">Mid Level (3-5 years)</option>
+                    <option value="senior">Senior Level (6+ years)</option>
+                </select>
+            </div>
+
+            <button class="button" id="generate-interview-button">Generate Interview Questions</button>
+
+            <div class="loading" id="interview-loading">
+                <div class="spinner"></div>
+                <p>Generating interview questions...</p>
+            </div>
+
+            <div class="resume-preview" id="interview-questions" style="display: none;">
+                <h3>Interview Questions</h3>
+                <div id="interview-questions-content"></div>
+                <div id="interview-answer-section" style="display: none; margin-top: 20px;">
+                    <h4>Practice Your Answer</h4>
+                    <div class="form-group">
+                        <label for="interview-answer">Your Answer:</label>
+                        <textarea id="interview-answer" rows="4" placeholder="Type your answer here..."></textarea>
+                    </div>
+                    <button class="button" id="submit-answer-button">Get Feedback</button>
+                    <div class="loading" id="feedback-loading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Analyzing your answer...</p>
+                    </div>
+                    <div id="answer-feedback" style="display: none; margin-top: 15px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Feature buttons
+        document.getElementById('job-search-feature').addEventListener('click', function () {
+            document.getElementById('job-search-modal').style.display = 'block';
+        });
+
+        document.getElementById('resume-feature').addEventListener('click', function () {
+            document.getElementById('resume-modal').style.display = 'block';
+        });
+
+        document.getElementById('cover-letter-feature').addEventListener('click', function () {
+            document.getElementById('cover-letter-modal').style.display = 'block';
+        });
+
+        document.getElementById('interview-feature').addEventListener('click', function () {
+            document.getElementById('interview-modal').style.display = 'block';
+        });
+
+        document.getElementById('linkedin-feature').addEventListener('click', function () {
+            document.getElementById('linkedin-modal').style.display = 'block';
+        });
+
+        document.getElementById('company-feature').addEventListener('click', function () {
+            document.getElementById('company-research-modal').style.display = 'block';
+        });
+
+        // Sign up button
+        document.getElementById('signup-button').addEventListener('click', function () {
+            document.getElementById('signup-modal').style.display = 'block';
+        });
+
+        // Close buttons
+        document.getElementById('resume-close').addEventListener('click', function () {
+            document.getElementById('resume-modal').style.display = 'none';
+        });
+
+        document.getElementById('signup-close').addEventListener('click', function () {
+            document.getElementById('signup-modal').style.display = 'none';
+        });
+
+        document.getElementById('cover-letter-close').addEventListener('click', function () {
+            document.getElementById('cover-letter-modal').style.display = 'none';
+        });
+
+        document.getElementById('linkedin-close').addEventListener('click', function () {
+            document.getElementById('linkedin-modal').style.display = 'none';
+        });
+
+        document.getElementById('job-search-close').addEventListener('click', function () {
+            document.getElementById('job-search-modal').style.display = 'none';
+        });
+
+        document.getElementById('interview-close').addEventListener('click', function () {
+            document.getElementById('interview-modal').style.display = 'none';
+        });
+
+        document.getElementById('company-research-close').addEventListener('click', function () {
+            document.getElementById('company-research-modal').style.display = 'none';
+        });
+
+        // Optimize resume button
+        document.getElementById('optimize-button').addEventListener('click', function () {
+            const resumeText = document.getElementById('resume-text').value;
+            const jobDescription = document.getElementById('job-description').value;
+
+            if (!resumeText || !jobDescription) {
+                alert('Please enter both your resume and the job description.');
+                return;
+            }
+
+            // Show loading spinner
+            document.getElementById('resume-loading').style.display = 'block';
+
+            // Simulate AI processing
+            setTimeout(() => {
+                document.getElementById('resume-loading').style.display = 'none';
+                document.getElementById('optimized-resume').style.display = 'block';
+
+                // Generate optimized resume (this would normally be done by AI)
+                const optimizedResume = generateOptimizedResume(resumeText, jobDescription);
+                document.getElementById('optimized-resume-content').innerHTML = optimizedResume;
+            }, 3000);
+        });
+
+        // Create account button
+        document.getElementById('create-account-button').addEventListener('click', function () {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const plan = document.getElementById('plan').value;
+
+            if (!name || !email || !password) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            alert(`Thank you for signing up, ${name}! You have selected the ${plan} plan. In a real application, you would now be redirected to payment processing.`);
+            document.getElementById('signup-modal').style.display = 'none';
+        });
+
+        function generateOptimizedResume(resume, jobDescription) {
+            // This is a simplified simulation of what an AI would do
+            // In a real application, this would call an API to process the resume
+
+            // Extract keywords from job description
+            const keywords = extractKeywords(jobDescription);
+
+            // Highlight matching keywords in resume
+            let optimizedResume = resume;
+            keywords.forEach(keyword => {
+                const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+                optimizedResume = optimizedResume.replace(regex, `<strong style="color: #27ae60;">${keyword}</strong>`);
+            });
+
+            // Add suggestions
+            const suggestions = [
+                'Add more quantifiable achievements',
+                'Include relevant certifications',
+                'Highlight leadership experience',
+                'Emphasize teamwork and collaboration skills'
+            ];
+
+            let suggestionsHTML = '<h4>Suggestions for Improvement:</h4><ul>';
+            suggestions.forEach(suggestion => {
+                suggestionsHTML += `<li>${suggestion}</li>`;
+            });
+            suggestionsHTML += '</ul>';
+
+            return `<div>${optimizedResume}</div><hr>${suggestionsHTML}`;
+        }
+
+        function extractKeywords(jobDescription) {
+            // Simplified keyword extraction
+            const commonKeywords = [
+                'experience', 'skills', 'team', 'leadership', 'project',
+                'management', 'development', 'analysis', 'communication',
+                'degree', 'bachelor', 'master', 'certification', 'proficient',
+                'expert', 'knowledge', 'responsible', 'collaborate', 'implement'
+            ];
+
+            // Return keywords that appear in the job description
+            return commonKeywords.filter(keyword =>
+                jobDescription.toLowerCase().includes(keyword.toLowerCase())
+            );
+        }
+
+        // Cover Letter Generation
+        document.getElementById('generate-cover-letter-button').addEventListener('click', function () {
+            const resumeText = document.getElementById('cl-resume-text').value;
+            const jobDescription = document.getElementById('cl-job-description').value;
+            const companyName = document.getElementById('cl-company-name').value;
+            const hiringManager = document.getElementById('cl-hiring-manager').value;
+
+            if (!resumeText || !jobDescription || !companyName) {
+                alert('Please enter your resume, the job description, and the company name.');
+                return;
+            }
+
+            // Show loading spinner
+            document.getElementById('cover-letter-loading').style.display = 'block';
+
+            // Simulate AI processing
+            setTimeout(() => {
+                document.getElementById('cover-letter-loading').style.display = 'none';
+                document.getElementById('generated-cover-letter').style.display = 'block';
+
+                // Generate cover letter (this would normally be done by AI)
+                const coverLetter = generateCoverLetter(resumeText, jobDescription, companyName, hiringManager);
+                document.getElementById('cover-letter-content').innerHTML = coverLetter;
+            }, 3000);
+        });
+
+        function generateCoverLetter(resume, jobDescription, companyName, hiringManager) {
+            // Extract name from resume (first line or something similar)
+            const nameMatch = resume.match(/^([A-Za-z\s]+)/);
+            const name = nameMatch ? nameMatch[0].trim() : "Job Applicant";
+
+            // Current date
+            const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            // Extract job title from job description
+            const titleMatch = jobDescription.match(/([A-Za-z\s]+Engineer|Developer|Designer|Manager|Director|Specialist|Analyst|Consultant|Assistant|Coordinator|Administrator|Representative)/i);
+            const jobTitle = titleMatch ? titleMatch[0].trim() : "Position";
+
+            // Extract skills from resume and job description
+            const skills = extractKeywords(jobDescription).filter(keyword =>
+                resume.toLowerCase().includes(keyword.toLowerCase())
+            );
+
+            // Generate greeting
+            let greeting = "Dear Hiring Manager";
+            if (hiringManager) {
+                greeting = `Dear ${hiringManager}`;
+            }
+
+            // Generate cover letter
+            let coverLetterHTML = `
+                <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                    <div style="text-align: right;">${date}</div>
+                    <div style="margin-top: 20px;">${greeting},</div>
+                    
+                    <p>I am writing to express my interest in the ${jobTitle} position at ${companyName}. With my background and skills, I believe I would be a valuable addition to your team.</p>
+                    
+                    <p>After reviewing the job description, I am confident that my experience aligns well with your requirements. Throughout my career, I have developed strong skills in ${skills.slice(0, 3).join(', ')}, which are directly relevant to this role.</p>
+                    
+                    <p>What particularly draws me to ${companyName} is your reputation for ${Math.random() > 0.5 ? 'innovation and excellence' : 'quality and customer satisfaction'} in the industry. I am excited about the opportunity to contribute to your team and help achieve your company's goals.</p>
+                    
+                    <p>I would welcome the chance to discuss how my background, skills, and experiences would benefit ${companyName}. Thank you for considering my application. I look forward to the opportunity to speak with you further about this position.</p>
+                    
+                    <div style="margin-top: 20px;">Sincerely,</div>
+                    <div style="margin-top: 10px;">${name}</div>
+                </div>
+            `;
+
+            return coverLetterHTML;
+        }
+
+        // LinkedIn Profile Optimization
+        document.getElementById('optimize-linkedin-button').addEventListener('click', function () {
+            const resumeText = document.getElementById('linkedin-resume').value;
+            const industry = document.getElementById('linkedin-industry').value;
+            const goals = document.getElementById('linkedin-goals').value;
+
+            if (!resumeText) {
+                alert('Please enter your resume text.');
+                return;
+            }
+
+            // Show loading spinner
+            document.getElementById('linkedin-loading').style.display = 'block';
+
+            // Simulate AI processing
+            setTimeout(() => {
+                document.getElementById('linkedin-loading').style.display = 'none';
+                document.getElementById('optimized-linkedin').style.display = 'block';
+
+                // Generate LinkedIn profile (this would normally be done by AI)
+                const linkedinProfile = generateLinkedInProfile(resumeText, industry, goals);
+                document.getElementById('linkedin-content').innerHTML = linkedinProfile;
+            }, 3000);
+        });
+
+        function generateLinkedInProfile(resume, industry, goals) {
+            // Extract name from resume (first line or something similar)
+            const nameMatch = resume.match(/^([A-Za-z\s]+)/);
+            const name = nameMatch ? nameMatch[0].trim() : "Professional";
+
+            // Extract potential headline information
+            const titleMatch = resume.match(/([A-Za-z\s]+Engineer|Developer|Designer|Manager|Director|Specialist|Analyst|Consultant)/i);
+            const title = titleMatch ? titleMatch[0].trim() : "Professional";
+
+            // Extract skills from resume
+            const skills = [
+                'Leadership', 'Project Management', 'Strategic Planning', 'Team Building',
+                'JavaScript', 'React', 'Node.js', 'Python', 'Data Analysis',
+                'Marketing', 'Sales', 'Customer Success', 'Product Management',
+                'UX/UI Design', 'Research', 'Communication', 'Problem Solving'
+            ].filter(skill => resume.toLowerCase().includes(skill.toLowerCase()));
+
+            // Random selection of skills that might be in the resume
+            const additionalSkills = [
+                'Cross-functional Collaboration', 'Agile Methodologies', 'Stakeholder Management',
+                'Strategic Thinking', 'Business Development', 'Process Improvement',
+                'Data Visualization', 'Technical Writing', 'Public Speaking'
+            ].slice(0, 3);
+
+            // Combine skills
+            const allSkills = [...skills.slice(0, 6), ...additionalSkills];
+
+            // Generate industry-specific headline
+            let headline = `${title}`;
+            if (industry) {
+                headline += ` | ${industry.charAt(0).toUpperCase() + industry.slice(1)} Professional`;
+            }
+            if (goals && goals.includes('leadership')) {
+                headline += ' | Team Leader';
+            }
+
+            // Generate LinkedIn profile
+            let linkedinHTML = `
+                <div style="font-family: Arial, sans-serif;">
+                    <h4>Headline</h4>
+                    <div style="background-color: #f0f7ff; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+                        <strong>${headline}</strong>
+                    </div>
+                    
+                    <h4>About</h4>
+                    <div style="background-color: #f0f7ff; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+                        <p>Experienced ${title} with a passion for ${industry || 'excellence'} and a track record of delivering results. I combine technical expertise with strong business acumen to drive innovation and solve complex problems.</p>
+                        <p>${goals ? 'Career goals: ' + goals : 'Seeking opportunities to leverage my skills and experience to make a meaningful impact.'}</p>
+                    </div>
+                    
+                    <h4>Featured Skills</h4>
+                    <div style="background-color: #f0f7ff; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+                        <ul style="columns: 2; list-style-type: none; padding-left: 0;">
+                            ${allSkills.map(skill => `<li>✓ ${skill}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <h4>Optimization Tips</h4>
+                    <ul>
+                        <li>Add a professional profile photo (increases profile views by 14x)</li>
+                        <li>Request recommendations from colleagues and managers</li>
+                        <li>Engage with industry content regularly</li>
+                        <li>Join relevant groups in your industry</li>
+                        <li>Post thought leadership content weekly</li>
+                    </ul>
+                </div>
+            `;
+
+            return linkedinHTML;
+        }
+
+        // Job Search
+        document.getElementById('search-jobs-button').addEventListener('click', function () {
+            const keywords = document.getElementById('job-keywords').value;
+            const location = document.getElementById('job-location').value;
+            const jobType = document.getElementById('job-type').value;
+            const experience = document.getElementById('job-experience').value;
+
+            if (!keywords) {
+                alert('Please enter job keywords to search.');
+                return;
+            }
+
+            // Show loading spinner
+            document.getElementById('job-search-loading').style.display = 'block';
+
+            // Simulate API call
+            setTimeout(() => {
+                document.getElementById('job-search-loading').style.display = 'none';
+                document.getElementById('job-search-results').style.display = 'block';
+
+                // Generate job search results (this would normally come from an API)
+                const jobResults = generateJobResults(keywords, location, jobType, experience);
+                document.getElementById('job-results-content').innerHTML = jobResults;
+            }, 2000);
+        });
+
+        function generateJobResults(keywords, location, jobType, experience) {
+            // Generate mock job results based on search criteria
+            const jobs = [
+                {
+                    title: keywords.includes('developer') ? 'Senior Software Developer' :
+                        keywords.includes('manager') ? 'Product Manager' :
+                            keywords.includes('design') ? 'UX/UI Designer' :
+                                'Software Engineer',
+                    company: 'TechCorp Solutions',
+                    location: location || 'San Francisco, CA',
+                    type: jobType !== 'all' ? jobType : 'Full-time',
+                    salary: '$120,000 - $150,000',
+                    posted: '2 days ago',
+                    description: 'We are seeking an experienced professional to join our growing team...'
+                },
+                {
+                    title: keywords.includes('developer') ? 'Full Stack Developer' :
+                        keywords.includes('manager') ? 'Engineering Manager' :
+                            keywords.includes('design') ? 'Product Designer' :
+                                'Frontend Developer',
+                    company: 'InnovateTech',
+                    location: location || 'New York, NY',
+                    type: jobType !== 'all' ? jobType : 'Full-time',
+                    salary: '$110,000 - $140,000',
+                    posted: '1 week ago',
+                    description: 'Join our dynamic team working on cutting-edge products...'
+                },
+                {
+                    title: keywords.includes('developer') ? 'Backend Developer' :
+                        keywords.includes('manager') ? 'Project Manager' :
+                            keywords.includes('design') ? 'Graphic Designer' :
+                                'DevOps Engineer',
+                    company: 'Global Systems Inc.',
+                    location: location || 'Remote',
+                    type: jobType !== 'all' ? jobType : 'Contract',
+                    salary: '$100,000 - $130,000',
+                    posted: '3 days ago',
+                    description: 'Looking for a talented professional to help scale our infrastructure...'
+                },
+                {
+                    title: keywords.includes('developer') ? 'Mobile App Developer' :
+                        keywords.includes('manager') ? 'Marketing Manager' :
+                            keywords.includes('design') ? 'Senior Designer' :
+                                'Data Scientist',
+                    company: 'DataDriven Analytics',
+                    location: location || 'Austin, TX',
+                    type: jobType !== 'all' ? jobType : 'Full-time',
+                    salary: '$115,000 - $145,000',
+                    posted: '5 days ago',
+                    description: 'Join our team to build innovative data solutions...'
+                }
+            ];
+
+            // Filter by experience level if specified
+            let filteredJobs = jobs;
+            if (experience !== 'all') {
+                if (experience === 'entry') {
+                    filteredJobs = jobs.filter(job => !job.title.includes('Senior') && !job.title.includes('Manager'));
+                } else if (experience === 'mid') {
+                    filteredJobs = jobs.filter(job => !job.title.includes('Senior') && !job.title.includes('Junior'));
+                } else if (experience === 'senior') {
+                    filteredJobs = jobs.filter(job => job.title.includes('Senior') || job.title.includes('Manager'));
+                }
+            }
+
+            // Generate HTML for job results
+            let jobResultsHTML = `
+                <p>Found ${filteredJobs.length} jobs matching your criteria</p>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+            `;
+
+            filteredJobs.forEach(job => {
+                jobResultsHTML += `
+                    <div style="border: 1px solid #ddd; border-radius: 4px; padding: 15px; background-color: white;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 style="margin: 0 0 5px 0; color: #2c3e50;">${job.title}</h3>
+                                <div>${job.company} - ${job.location}</div>
+                                <div style="color: #7f8c8d; margin-top: 5px;">${job.type} • ${job.salary}</div>
+                            </div>
+                            <div style="color: #7f8c8d;">Posted ${job.posted}</div>
+                        </div>
+                        <p style="margin-top: 10px;">${job.description}</p>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="button" style="margin-top: 0;">Apply Now</button>
+                            <button style="background-color: white; border: 1px solid #3498db; color: #3498db; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Save Job</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            jobResultsHTML += '</div>';
+            return jobResultsHTML;
+        }
+
+        // Interview Preparation
+        document.getElementById('generate-interview-button').addEventListener('click', function () {
+            const jobTitle = document.getElementById('interview-job-title').value;
+            const company = document.getElementById('interview-company').value;
+            const interviewType = document.getElementById('interview-type').value;
+            const experience = document.getElementById('interview-experience').value;
+
+            if (!jobTitle || !company) {
+                alert('Please enter the job title and company name.');
+                return;
+            }
+
+            // Show loading spinner
+            document.getElementById('interview-loading').style.display = 'block';
+
+            // Simulate AI processing
+            setTimeout(() => {
+                document.getElementById('interview-loading').style.display = 'none';
+                document.getElementById('interview-questions').style.display = 'block';
+
+                // Generate interview questions (this would normally be done by AI)
+                const interviewQuestions = generateInterviewQuestions(jobTitle, company, interviewType, experience);
+                document.getElementById('interview-questions-content').innerHTML = interviewQuestions;
+
+                // Show answer section
+                document.getElementById('interview-answer-section').style.display = 'block';
+            }, 2500);
+        });
+
+        function generateInterviewQuestions(jobTitle, company, interviewType, experience) {
+            // Define question sets based on interview type
+            const questionSets = {
+                behavioral: [
+                    "Tell me about a time when you faced a significant challenge at work. How did you overcome it?",
+                    "Describe a situation where you had to work with a difficult team member. How did you handle it?",
+                    "Give an example of a time when you had to meet a tight deadline. What was your approach?",
+                    "Tell me about a time when you had to make an important decision with limited information.",
+                    "Describe a situation where you had to adapt to a significant change at work."
+                ],
+                technical: [
+                    `What programming languages or technical skills are you most proficient in that relate to this ${jobTitle} role?`,
+                    "Describe a complex technical problem you've solved recently. What was your approach?",
+                    "How do you stay updated with the latest technologies and trends in your field?",
+                    "Explain a technical concept related to your field as if you were explaining it to someone non-technical.",
+                    `How would you approach debugging a critical issue in a production environment as a ${jobTitle}?`
+                ],
+                case: [
+                    `${company} is launching a new product. How would you approach the market analysis?`,
+                    `How would you improve one of ${company}'s existing products or services?`,
+                    "A key client is threatening to leave. How would you approach this situation?",
+                    `${company} is experiencing a 20% decline in sales. What steps would you take to identify and address the issue?`,
+                    "How would you evaluate the success of a new initiative six months after launch?"
+                ],
+                leadership: [
+                    "Describe your leadership style and how it has evolved over time.",
+                    "Tell me about a time when you had to motivate a team during a challenging period.",
+                    "How do you approach delegating tasks and responsibilities to team members?",
+                    "Describe a situation where you had to provide difficult feedback to a team member.",
+                    "How do you ensure your team stays aligned with organizational goals and priorities?"
+                ]
+            };
+
+            // Select questions based on interview type
+            const questions = questionSets[interviewType] || questionSets.behavioral;
+
+            // Generate company-specific question
+            let companyQuestion = `Why are you interested in working at ${company}?`;
+
+            // Generate job-specific question
+            let jobQuestion = `What interests you most about this ${jobTitle} position?`;
+
+            // Add experience-specific question
+            let experienceQuestion = "";
+            if (experience === "entry") {
+                experienceQuestion = "How has your education or previous experiences prepared you for this role?";
+            } else if (experience === "mid") {
+                experienceQuestion = "How have you grown professionally in your career so far?";
+            } else if (experience === "senior") {
+                experienceQuestion = "How do you approach mentoring junior team members?";
+            }
+
+            // Combine all questions
+            const allQuestions = [companyQuestion, jobQuestion, experienceQuestion, ...questions.slice(0, 3)];
+
+            // Generate HTML for questions
+            let questionsHTML = `<div style="font-family: Arial, sans-serif;">
+                <p>Here are some potential interview questions for your <strong>${interviewType}</strong> interview at <strong>${company}</strong> for the <strong>${jobTitle}</strong> position:</p>
+                <ol>`;
+
+            allQuestions.filter(q => q).forEach(question => {
+                questionsHTML += `<li style="margin-bottom: 15px; padding: 10px; background-color: #f0f7ff; border-radius: 4px;">${question}</li>`;
+            });
+
+            questionsHTML += `</ol>
+                <p>Click on a question to practice your answer, or select "Get Feedback" to receive AI-powered feedback on your response.</p>
+            </div>`;
+
+            return questionsHTML;
+        }
+
+        // Add event listener for the submit answer button
+        document.getElementById('submit-answer-button').addEventListener('click', function () {
+            const answer = document.getElementById('interview-answer').value;
+
+            if (!answer) {
+                alert('Please enter your answer before requesting feedback.');
+                return;
+            }
+
+            // Show loading spinner
+            document.getElementById('feedback-loading').style.display = 'block';
+
+            // Simulate AI processing
+            setTimeout(() => {
+                document.getElementById('feedback-loading').style.display = 'none';
+                document.getElementById('answer-feedback').style.display = 'block';
+
+                // Generate feedback (this would normally be done by AI)
+                const feedback = generateInterviewFeedback(answer);
+                document.getElementById('answer-feedback').innerHTML = feedback;
+            }, 2000);
+        });
+
+        function generateInterviewFeedback(answer) {
+            // This is a simplified simulation of what an AI would do
+
+            // Analyze answer length
+            const wordCount = answer.split(/\s+/).filter(word => word.length > 0).length;
+            let lengthFeedback = "";
+            if (wordCount < 50) {
+                lengthFeedback = "Your answer is quite brief. Consider expanding with more details and examples.";
+            } else if (wordCount > 200) {
+                lengthFeedback = "Your answer is quite detailed, which is good, but consider being more concise in an interview setting.";
+            } else {
+                lengthFeedback = "Your answer has a good length for an interview response.";
+            }
+
+            // Check for STAR method components (simplified)
+            const hasContext = /situation|context|background/i.test(answer);
+            const hasAction = /action|approach|steps|method/i.test(answer);
+            const hasResult = /result|outcome|impact|success|accomplish/i.test(answer);
+
+            let structureFeedback = "";
+            if (hasContext && hasAction && hasResult) {
+                structureFeedback = "Excellent use of the STAR method (Situation, Task, Action, Result) in your response.";
+            } else {
+                structureFeedback = "Consider structuring your answer using the STAR method: describe the Situation, the Task required, the Action you took, and the Result achieved.";
+            }
+
+            // Generate random strengths and areas for improvement
+            const strengths = [
+                "Clear communication of your experience",
+                "Good use of specific examples",
+                "Demonstrated problem-solving skills",
+                "Showed leadership qualities",
+                "Highlighted relevant technical skills"
+            ];
+
+            const improvements = [
+                "Quantify your achievements with specific metrics",
+                "Connect your experience more directly to the job requirements",
+                "Show more reflection on what you learned",
+                "Highlight your teamwork and collaboration skills",
+                "Emphasize how your actions created value"
+            ];
+
+            // Select random strengths and improvements
+            const selectedStrengths = strengths.sort(() => 0.5 - Math.random()).slice(0, 2);
+            const selectedImprovements = improvements.sort(() => 0.5 - Math.random()).slice(0, 2);
+
+            // Generate feedback HTML
+            let feedbackHTML = `
+                <div style="font-family: Arial, sans-serif; padding: 15px; background-color: #f9f9f9; border-radius: 5px;">
+                    <h4 style="margin-top: 0; color: #2c3e50;">Feedback on Your Answer</h4>
+                    
+                    <p>${lengthFeedback} ${structureFeedback}</p>
+                    
+                    <h5 style="color: #27ae60;">Strengths:</h5>
+                    <ul>
+                        ${selectedStrengths.map(strength => `<li>${strength}</li>`).join('')}
+                    </ul>
+                    
+                    <h5 style="color: #e74c3c;">Areas for Improvement:</h5>
+                    <ul>
+                        ${selectedImprovements.map(improvement => `<li>${improvement}</li>`).join('')}
+                    </ul>
+                    
+                    <p style="margin-bottom: 0;">Overall, continue practicing your responses to build confidence and clarity in your interview answers.</p>
+                </div>
+            `;
+
+            return feedbackHTML;
+        }
+
+        // Company Research
+        document.getElementById('research-company-button').addEventListener('click', function () {
+            const companyName = document.getElementById('company-name').value;
+            const industry = document.getElementById('company-industry').value;
+            const researchFocusSelect = document.getElementById('research-focus');
+            const selectedFocus = Array.from(researchFocusSelect.selectedOptions).map(option => option.value);
+
+            if (!companyName) {
+                alert('Please enter a company name.');
+                return;
+            }
+
+            // Show loading spinner
+            document.getElementById('company-research-loading').style.display = 'block';
+
+            // Simulate AI processing
+            setTimeout(() => {
+                document.getElementById('company-research-loading').style.display = 'none';
+                document.getElementById('company-research-results').style.display = 'block';
+
+                // Generate company research (this would normally be done by AI)
+                const researchResults = generateCompanyResearch(companyName, industry, selectedFocus);
+                document.getElementById('company-research-content').innerHTML = researchResults;
+            }, 3000);
+        });
+
+        function generateCompanyResearch(companyName, industry, focusAreas) {
+            // Default industry if not provided
+            const companyIndustry = industry || 'technology';
+
+            // Company data based on industry
+            const companyData = {
+                technology: {
+                    founded: "2005-2015",
+                    size: "500-5,000 employees",
+                    revenue: "$50M-$1B annually",
+                    headquarters: "San Francisco, CA",
+                    culture: "Fast-paced, innovative environment with flexible work arrangements and emphasis on work-life balance",
+                    benefits: ["Competitive salary", "Health insurance", "401(k) matching", "Unlimited PTO", "Remote work options"],
+                    interview_process: ["Phone screening", "Technical assessment", "Panel interview", "Culture fit interview", "Final executive interview"],
+                    competitors: ["Google", "Microsoft", "Amazon", "Meta", "Apple"]
+                },
+                finance: {
+                    founded: "1980-2000",
+                    size: "1,000-50,000 employees",
+                    revenue: "$500M-$10B annually",
+                    headquarters: "New York, NY",
+                    culture: "Professional, structured environment with emphasis on compliance and client service",
+                    benefits: ["Competitive salary", "Health insurance", "401(k) matching", "Annual bonus", "Professional development"],
+                    interview_process: ["HR screening", "Technical assessment", "Multiple rounds with team members", "Case study presentation", "Final interview with leadership"],
+                    competitors: ["JPMorgan Chase", "Bank of America", "Wells Fargo", "Citigroup", "Goldman Sachs"]
+                },
+                healthcare: {
+                    founded: "1950-2010",
+                    size: "1,000-20,000 employees",
+                    revenue: "$100M-$5B annually",
+                    headquarters: "Boston, MA",
+                    culture: "Mission-driven environment focused on patient care and medical innovation",
+                    benefits: ["Competitive salary", "Comprehensive health insurance", "Retirement plans", "Continuing education", "Work-life balance initiatives"],
+                    interview_process: ["Initial screening", "Skills assessment", "Panel interview", "Behavioral interview", "Final interview with department head"],
+                    competitors: ["UnitedHealth Group", "CVS Health", "Anthem", "Cigna", "Humana"]
+                },
+                retail: {
+                    founded: "1970-2010",
+                    size: "5,000-100,000+ employees",
+                    revenue: "$1B-$50B annually",
+                    headquarters: "Seattle, WA",
+                    culture: "Customer-focused environment with emphasis on service and operational excellence",
+                    benefits: ["Competitive wages", "Health insurance", "Employee discounts", "Career advancement", "Flexible scheduling"],
+                    interview_process: ["Application review", "Phone screening", "In-person interview", "Role-specific assessment", "Final interview with store/regional manager"],
+                    competitors: ["Walmart", "Target", "Amazon", "Costco", "Best Buy"]
+                }
+            };
+
+            // Use the specified industry or default to technology
+            const data = companyData[companyIndustry] || companyData.technology;
+
+            // Recent news (simulated)
+            const recentNews = [
+                `${companyName} Announces New Product Line for 2025`,
+                `${companyName} Reports Strong Q2 Earnings, Exceeding Analyst Expectations`,
+                `${companyName} Expands Operations to European Markets`,
+                `${companyName} Named Among Top Employers in ${companyIndustry.charAt(0).toUpperCase() + companyIndustry.slice(1)} Sector`,
+                `${companyName} Launches Sustainability Initiative to Reduce Carbon Footprint`
+            ];
+
+            // Interview tips based on industry
+            const interviewTips = {
+                technology: [
+                    "Research their tech stack and be prepared to discuss relevant technologies",
+                    "Review their GitHub repositories or technical blog posts if available",
+                    "Prepare for technical coding challenges and system design questions",
+                    "Be ready to discuss past projects and problem-solving approaches",
+                    "Ask about their development methodology (Agile, Scrum, etc.)"
+                ],
+                finance: [
+                    "Demonstrate knowledge of financial regulations relevant to their business",
+                    "Be prepared for case studies and analytical assessments",
+                    "Show attention to detail and risk awareness",
+                    "Research recent market trends affecting their business",
+                    "Prepare examples of your ethical decision-making"
+                ],
+                healthcare: [
+                    "Demonstrate knowledge of healthcare regulations (HIPAA, etc.)",
+                    "Emphasize patient/client-centered approach",
+                    "Prepare examples of collaborative work in multidisciplinary teams",
+                    "Research recent healthcare innovations relevant to their focus",
+                    "Show commitment to continuing education and staying current with best practices"
+                ],
+                retail: [
+                    "Research their customer demographics and value proposition",
+                    "Prepare examples of excellent customer service",
+                    "Demonstrate knowledge of their product lines and competitors",
+                    "Show flexibility and ability to work in fast-paced environments",
+                    "Prepare questions about their omnichannel strategy"
+                ]
+            };
+
+            // Build HTML based on selected focus areas
+            let researchHTML = `<div style="font-family: Arial, sans-serif;">`;
+
+            // Company overview (always included)
+            researchHTML += `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 8px;">Company Overview</h4>
+                    <p><strong>${companyName}</strong> is a leading company in the ${companyIndustry} industry.</p>
+                    <ul style="list-style-type: none; padding-left: 0;">
+                        <li><strong>Founded:</strong> ${data.founded}</li>
+                        <li><strong>Size:</strong> ${data.size}</li>
+                        <li><strong>Revenue:</strong> ${data.revenue}</li>
+                        <li><strong>Headquarters:</strong> ${data.headquarters}</li>
+                    </ul>
+                </div>
+            `;
+
+            // Company culture (if selected)
+            if (focusAreas.includes('culture')) {
+                researchHTML += `
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 8px;">Company Culture</h4>
+                        <p>${data.culture}</p>
+                        <p><strong>Benefits and Perks:</strong></p>
+                        <ul>
+                            ${data.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Financial health (if selected)
+            if (focusAreas.includes('financials')) {
+                researchHTML += `
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 8px;">Financial Health</h4>
+                        <p>${companyName} is currently in a ${Math.random() > 0.7 ? 'stable' : 'strong'} financial position with ${Math.random() > 0.5 ? 'steady' : 'growing'} revenue.</p>
+                        <ul>
+                            <li>Revenue: ${data.revenue}</li>
+                            <li>Growth Rate: ${Math.floor(Math.random() * 20) + 5}% year-over-year</li>
+                            <li>Market Position: ${Math.random() > 0.5 ? 'Market Leader' : 'Strong Competitor'}</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Recent news (if selected)
+            if (focusAreas.includes('news')) {
+                researchHTML += `
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 8px;">Recent News</h4>
+                        <ul>
+                            ${recentNews.slice(0, 3).map(news => `<li>${news}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Competitors (if selected)
+            if (focusAreas.includes('competitors')) {
+                researchHTML += `
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 8px;">Key Competitors</h4>
+                        <ul>
+                            ${data.competitors.map(competitor => `<li>${competitor}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Interview tips (if selected)
+            if (focusAreas.includes('interview')) {
+                const tips = interviewTips[companyIndustry] || interviewTips.technology;
+                researchHTML += `
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 8px;">Interview Preparation Tips</h4>
+                        <p>Based on our research of ${companyName} and similar companies in the ${companyIndustry} industry:</p>
+                        <ul>
+                            ${tips.map(tip => `<li>${tip}</li>`).join('')}
+                        </ul>
+                        <p><strong>Typical Interview Process:</strong></p>
+                        <ol>
+                            ${data.interview_process.map(step => `<li>${step}</li>`).join('')}
+                        </ol>
+                    </div>
+                `;
+            }
+
+            researchHTML += `
+                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                    <p><em>Note: This information is generated for demonstration purposes and may not reflect actual data about ${companyName}.</em></p>
+                </div>
+            </div>`;
+
+            return researchHTML;
+        }
+    </script>
+</body>
+
+</html>
